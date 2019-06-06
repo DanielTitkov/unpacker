@@ -27,8 +27,8 @@ func TestRepeat(t *testing.T) {
 }
 
 
-func TestSimpleUnpacks(t *testing.T) {
-    t.Log("Trying string without escaping")
+func TestUnpacks(t *testing.T) {
+    t.Log("Trying string unpacking")
 
     type testcase struct {
         inp string
@@ -41,6 +41,9 @@ func TestSimpleUnpacks(t *testing.T) {
         {"45", "Incorrect input"},
         {"a10", "aaaaaaaaaa"},
         {"abc9177d", "ab" + repeat("c", 9177) + "d"},
+        {`qwe\4\5`, "qwe45"},
+        {`qwe\45`, "qwe44444"},
+        {`qwe\6765ee`, "qwe" + repeat("6", 765) + "ee"},
     }
 
     for _, tc := range testcases {

@@ -30,7 +30,7 @@ func toNumber(s string) int {
     if err == nil {
         return i
     }
-    log.Printf("No a number: %s", s)
+    log.Printf("Not a number: %s", s)
     return 1
 }
 
@@ -40,13 +40,21 @@ func unpack(s string) string {
     var result, buffer strings.Builder
     for i := len(runesList)-1; i >= 0; i-- {
         elem := string(runesList[i])
-        if isNumber(elem) {
+        switch {
+        case isNumber(elem):
             buffer.WriteString(elem)
-        } else if buffer.Len() > 0 {
+        case elem == `\` && buffer.Len() > 1:
+            charNumber := toNumber(strrev.Reverse(buffer.String())[1:])
+            result.WriteString(repeat(strrev.Reverse(buffer.String())[0:1], charNumber))
+            buffer.Reset()
+        case elem == `\` && buffer.Len() == 1:
+            result.WriteString(buffer.String())
+            buffer.Reset()
+        case buffer.Len() > 0:
             charNumber := toNumber(strrev.Reverse(buffer.String()))
             result.WriteString(repeat(elem, charNumber))
             buffer.Reset()
-        } else {
+        default:
             result.WriteString(elem)
         }
     }
@@ -58,7 +66,8 @@ func unpack(s string) string {
 
 
 func main() {
-    s := "a4bc2d5e"
+    s := `a4b\\54c2d5e`
     res := unpack(s)
+    fmt.Println(s)
     fmt.Println(res)
 }
