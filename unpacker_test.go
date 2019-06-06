@@ -27,6 +27,32 @@ func TestRepeat(t *testing.T) {
 }
 
 
+func TestBufferResolve(t *testing.T) {
+    t.Log("Resolving buffer data")
+
+    type testcaseBuf struct {
+        elem string
+        bufs string
+        outp string
+    }
+
+    testcases := []testcaseBuf {
+        {"e", "4", "eeee"},
+        {"e", "457", repeat("e", 457)},
+        {"e", `\5`, "e5"},
+        {"e", `\\`, `e\`},
+        {"e", `\54`, "e5555"},
+        {"e", `\\4`, `e\\\\`},
+    }
+
+    for _, tc := range testcases {
+        if res := resolveBuffer(tc.elem, tc.bufs); res != tc.outp {
+            t.Errorf("Expected %s, got %s", tc.outp, res)
+        }
+    }
+}
+
+
 func TestUnpacks(t *testing.T) {
     t.Log("Trying string unpacking")
 
@@ -44,6 +70,9 @@ func TestUnpacks(t *testing.T) {
         {`qwe\4\5`, "qwe45"},
         {`qwe\45`, "qwe44444"},
         {`qwe\6765ee`, "qwe" + repeat("6", 765) + "ee"},
+        {`qwe\\5`, `qwe\\\\\`},
+        {`aa\\bb`, `aa\bb`},
+        {`aa\bb`, `aabb`},
     }
 
     for _, tc := range testcases {

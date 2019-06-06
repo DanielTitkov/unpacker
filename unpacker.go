@@ -35,24 +35,34 @@ func toNumber(s string) int {
 }
 
 
+func resolveBuffer(elem, bufs string) string {
+    firstChar := bufs[0:1]
+    remainder := bufs[1:]
+    switch {
+    case firstChar != `\`:
+        charNumber := toNumber(bufs)
+        return repeat(elem, charNumber)
+    case len(bufs) == 2:
+        return elem + remainder
+    case len(bufs) > 2:
+        return elem + resolveBuffer(remainder[0:1], remainder[1:])
+    default:
+        return elem
+    }
+}
+
+
 func unpack(s string) string {
     runesList := []rune(s)
     var result, buffer strings.Builder
     for i := len(runesList)-1; i >= 0; i-- {
         elem := string(runesList[i])
         switch {
-        case isNumber(elem):
+        case isNumber(elem) || elem == `\`:
             buffer.WriteString(elem)
-        case elem == `\` && buffer.Len() > 1:
-            charNumber := toNumber(strrev.Reverse(buffer.String())[1:])
-            result.WriteString(repeat(strrev.Reverse(buffer.String())[0:1], charNumber))
-            buffer.Reset()
-        case elem == `\` && buffer.Len() == 1:
-            result.WriteString(buffer.String())
-            buffer.Reset()
         case buffer.Len() > 0:
-            charNumber := toNumber(strrev.Reverse(buffer.String()))
-            result.WriteString(repeat(elem, charNumber))
+            bufferString := resolveBuffer(elem, strrev.Reverse(buffer.String()))
+            result.WriteString(strrev.Reverse(bufferString))
             buffer.Reset()
         default:
             result.WriteString(elem)
@@ -66,8 +76,7 @@ func unpack(s string) string {
 
 
 func main() {
-    s := `a4b\\54c2d5e`
+    s := "a4bc2d5e"
     res := unpack(s)
-    fmt.Println(s)
-    fmt.Println(res)
+    fmt.Println(s, "=>", res)
 }
