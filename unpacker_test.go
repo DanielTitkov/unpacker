@@ -7,16 +7,16 @@ import "testing"
 func TestRepeat(t *testing.T) {
     t.Log("Repeating the string n times")
 
-    type testcase struct {
-        inp string
+    type testcaseRep struct {
         number int
+        inp string
         outp string
     }
 
-    testcases := []testcase {
-        {"foo", 0, ""},
-        {"foo", 1, "foo"},
-        {"foo", 3, "foofoofoo"},
+    testcases := []testcaseRep {
+        {0, "foo", ""},
+        {1, "foo", "foo"},
+        {3, "foo", "foofoofoo"},
     }
 
     for _, tc := range testcases {
@@ -28,7 +28,7 @@ func TestRepeat(t *testing.T) {
 
 
 func TestSimpleUnpacks(t *testing.T) {
-    t.Log("Trying string with single numbers without escaping")
+    t.Log("Trying string without escaping")
 
     type testcase struct {
         inp string
@@ -39,6 +39,8 @@ func TestSimpleUnpacks(t *testing.T) {
         {"a4bc2d5e", "aaaabccddddde"},
         {"abcd", "abcd"},
         {"45", "Incorrect input"},
+        {"a10", "aaaaaaaaaa"},
+        {"abc9177d", "ab" + repeat("c", 9177) + "d"},
     }
 
     for _, tc := range testcases {
