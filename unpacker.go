@@ -10,15 +10,6 @@ import (
 )
 
 
-func repeat(s string, n int) string {
-    var builder strings.Builder
-    for i := 0; i < n; i++ {
-        builder.WriteString(s)
-    }
-    return builder.String()
-}
-
-
 func isNumber(s string) bool {
     _, err := strconv.Atoi(s)
     return err == nil
@@ -41,7 +32,7 @@ func resolveBuffer(elem, bufs string) string {
     switch {
     case firstChar != `\`:
         charNumber := toNumber(bufs)
-        return repeat(elem, charNumber)
+        return strings.Repeat(elem, charNumber)
     case len(bufs) == 2:
         return elem + remainder
     case len(bufs) > 2:
